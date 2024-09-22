@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Pool } from 'pg';
+import { Pool, Client } from 'pg';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -18,5 +18,29 @@ export class DatabaseService {
 
   async query(query: string, params?: any[]): Promise<any> {
     return this.pool.query(query, params);
+  }
+
+  async execInTransaction(queries: Array<[string, any[]]>): Promise<any> {
+    
+
+    const client = await this.pool.connect();
+    try {
+
+      await client.query('BEGIN');
+
+      queries.forEach(async (query) => {
+        await client.query(query[0], query[1]);        
+        
+      });
+
+      await client.query('COMMIT');
+    } catch (error) {
+
+      await client.query('BOLLBACK');
+      throw error;
+
+    } finally {
+      client.release();
+    }
   }
 }
