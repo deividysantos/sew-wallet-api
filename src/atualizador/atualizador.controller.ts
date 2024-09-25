@@ -14,14 +14,15 @@ export class AtualizadorController {
   }
 
   @Get('/insert/:cod')
-  getAtualizacao(@Param('cod') codigo: string): string {
+  async getAtualizacao(@Param('cod') codigo: string): Promise<string> {
+    
     if (codigo != this.configService.get<string>('COD')) {
         return ;
     }
 
     try{
-        this.atualizadorService.versao01();
-        this.atualizadorService.versao02();
+        await this.atualizadorService.versao01();
+        await this.atualizadorService.versao02();
 
         return 'Instruções inseridas com sucesso!'
     } catch (error) {
