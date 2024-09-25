@@ -25,7 +25,7 @@ export class UsuarioService {
   }
 
   async findById(usuario_id: number): Promise<string>{
-    const sql = 'SELECT * FROM USUARIO WHERE USUARIO_ID = $1';
+    const sql = 'SELECT USUARIO_ID, NOME, EMAIL, URL_GOOGLE FROM USUARIO WHERE USUARIO_ID = $1';
     let usuario;
     try {
       usuario = (await this.dbService.query(sql, [usuario_id])).rows[0];

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Res } from '@nestjs/common';
+import { Body, Controller, Post, Get, Res, Param } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsuarioService } from './usuario.service';
 import { CreateUserDto } from './DTO/create-user.dto';
@@ -22,12 +22,17 @@ export class UsuarioController {
   }
 
   @Get(':usuario_id')
-  async find(usuario_id: number, @Res() res: Response) {
+  async find(@Param('usuario_id') usuario_id: number, @Res() res: Response) {
     
-    const usuario = this.usuarioService.findById(usuario_id);
+    const usuario = await this.usuarioService.findById(usuario_id);
 
     return res.status(200).json({
       usuario: usuario,
     });
+  }
+
+  @Get('teste')
+  teste(){
+    return 'teste';
   }
 }
