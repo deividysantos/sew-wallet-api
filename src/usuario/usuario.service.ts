@@ -1,22 +1,23 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { CreateUserDto } from './DTO/create-user.dto';
+import { CriarUsuarioDto } from './DTO/criar-usuario.dto';
 
 @Injectable()
 export class UsuarioService {
   constructor(private readonly dbService: DatabaseService) {}
 
-  async insert(createUserDTO: CreateUserDto): Promise<string>{
+  async insert(criarUsuarioDto: CriarUsuarioDto): Promise<string>{
+    //TODO: Criptografar senha
     const sql = 'INSERT INTO USUARIO (NOME, EMAIL, SENHA) VALUES ($1, $2, $3)';
     try {
-      await this.dbService.query(sql, [createUserDTO.nome, createUserDTO.email, createUserDTO.senha]);
+      await this.dbService.query(sql, [criarUsuarioDto.nome, criarUsuarioDto.email, criarUsuarioDto.senha]);
     } catch (error) {
       throw new InternalServerErrorException('Erro ao inserir usuário' + error);
     }
 
     let usuario_id : string;
     try {
-      usuario_id = (await this.dbService.query('SELECT * FROM USUARIO WHERE EMAIL = $1', [createUserDTO.email])).rows[0].USUARIO_ID;
+      usuario_id = (await this.dbService.query('SELECT * FROM USUARIO WHERE EMAIL = $1', [criarUsuarioDto.email])).rows[0].USUARIO_ID;
     } catch (error) {
       throw new InternalServerErrorException('Erro ao buscar dados do usuário' + error);
     }

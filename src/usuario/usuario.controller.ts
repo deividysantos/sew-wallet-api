@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Get, Res, Param } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsuarioService } from './usuario.service';
-import { CreateUserDto } from './DTO/create-user.dto';
+import { CriarUsuarioDto } from './DTO/criar-usuario.dto';
 import { Response } from 'express';
 
 @Controller('usuario')
@@ -11,9 +11,9 @@ export class UsuarioController {
   ) {}
   
   @Post()
-  async create(@Body() createUserDTO: CreateUserDto, @Res() res: Response) {
+  async create(@Body() criarUsuarioDTO: CriarUsuarioDto, @Res() res: Response) {
     
-    const usuario_id = await this.usuarioService.insert(createUserDTO);
+    const usuario_id = await this.usuarioService.insert(criarUsuarioDTO);
 
     return res.status(201).json({
       mensagem: 'Usuário criado com sucesso!',
@@ -29,10 +29,5 @@ export class UsuarioController {
     return res.status(200).json({
       usuario: usuario,
     });
-  }
-
-  @Get('teste')
-  teste(){
-    return 'teste';
   }
 }
