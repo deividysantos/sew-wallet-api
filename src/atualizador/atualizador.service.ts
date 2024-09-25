@@ -113,6 +113,47 @@ export class AtualizadorService {
     if (await this.versaoCadastrada(2))
         return;
 
-    
+    let ultimaInstrucao = (await this.dbService.query('SELECT MAX(INSTRUCAO) FROM INSTRUCAO')).rows[0].max;
+
+    try {
+        const bancos = [
+            'Banco do Brasil',
+            'Caixa',
+            'Itaú Unibanco',
+            'Bradesco',
+            'Santander',
+            'Nubank',
+            'Banco Inter',
+            'BTG Pactual',
+            'Banrisul',
+            'Votorantim'];
+
+        await bancos.forEach( async (banco, index) => {
+            await this.insereInstrucao([
+                'Inserindo dados padrões em BANCO',
+                'INSERT INTO BANCO (NOME) VALUES (\''+banco+'\')', 2, index + ultimaInstrucao + 1
+            ]);
+        });
+
+        ultimaInstrucao = ultimaInstrucao + bancos.length;
+
+        await this.insereInstrucao([
+            'Alterando tabela USUARIO',
+            'ALTER TABLE USUARIO ADD EMAIL VARCHAR(100)', 2, ultimaInstrucao + 1
+        ]);
+
+        await this.insereInstrucao([
+            'Alterando tabela USUARIO',
+            'ALTER TABLE USUARIO ADD CONSTRAINT UNIQUE_EMAIL UNIQUE (EMAIL)', 2, ultimaInstrucao + 2
+        ]);
+
+        await this.insereInstrucao([
+            'Alterando tabela CONTA',
+            'ALTER TABLE CONTA ADD CONSTRAINT UNIQUE_NOME_USUARIO UNIQUE (NOME, USUARIO_ID)', 2, ultimaInstrucao + 3
+        ]);
+        
+    } catch (error) {
+        return `Erro durante a atualização: ${error.message}`; 
+    }
   }
 }
